@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import bgImage from "../assets/feedback-bg.png";
+import bgImage from "../Assets/feedback-bg.png";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
