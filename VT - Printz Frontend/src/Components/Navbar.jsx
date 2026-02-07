@@ -38,9 +38,8 @@ const Navbar = () => {
     const query = searchParams.get("search");
     if (query) {
       setSearchText(query);
+      setResults([]); // Clear results dropdown when arriving from a search link
     } else if (location.pathname !== '/product-list') {
-      // Only clear if we are NOT on product list (or if we want to clear when leaving search page)
-      // Actually, standard behavior: if I go to Home, I might want to clear it.
       setSearchText("");
     }
   }, [location.search, location.pathname]);

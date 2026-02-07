@@ -149,7 +149,8 @@ const ProductManager = () => {
             description: item.description || "",
             originalPrice: item.originalPrice || "",
             discountedPrice: item.discountedPrice || "",
-            features: item.features ? item.features.join(", ") : ""
+            features: item.features ? item.features.join(", ") : "",
+            video: item.video || ""
         });
         setShowForm(true);
         setShowForm(true);
@@ -369,13 +370,22 @@ const ProductManager = () => {
                         )}
 
                         {view === 'products' && (
-                            <input
-                                name="features"
-                                value={formData.features || ""}
-                                placeholder="Features (comma separated)"
-                                className="border p-2 rounded w-full"
-                                onChange={handleInputChange}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input
+                                    name="features"
+                                    value={formData.features || ""}
+                                    placeholder="Features (comma separated)"
+                                    className="border p-2 rounded w-full"
+                                    onChange={handleInputChange}
+                                />
+                                <input
+                                    name="video"
+                                    value={formData.video || ""}
+                                    placeholder="Video URL (e.g., /videos/example.mp4)"
+                                    className="border p-2 rounded w-full"
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         )}
 
                         <div className="flex gap-4">

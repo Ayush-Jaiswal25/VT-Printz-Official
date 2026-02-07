@@ -3,8 +3,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
+import { useNavigate } from "react-router-dom";
 
 const HeroCarousel = () => {
+  const navigate = useNavigate();
+
   return (
     <Swiper
       modules={[Pagination, Autoplay]}
@@ -35,10 +38,16 @@ const HeroCarousel = () => {
 
               {/* Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-3 bg-[#205CCB] text-white font-semibold rounded-full shadow-md hover:bg-[#2969e0] transition duration-300">
+                <button
+                  onClick={() => navigate('/products')}
+                  className="px-8 py-3 bg-[#205CCB] text-white font-semibold rounded-full shadow-md hover:bg-[#2969e0] transition duration-300 pointer-events-auto"
+                >
                   Shop Collection
                 </button>
-                <button className="px-8 py-3 bg-white text-[#205CCB] font-semibold rounded-full border-2 border-[#205CCB] shadow-md hover:bg-[#2969e0] hover:text-white transition duration-300">
+                <button
+                  onClick={() => navigate('/contact-us')}
+                  className="px-8 py-3 bg-white text-[#205CCB] font-semibold rounded-full border-2 border-[#205CCB] shadow-md hover:bg-[#2969e0] hover:text-white transition duration-300 pointer-events-auto"
+                >
                   Request a Quote
                 </button>
               </div>
@@ -75,10 +84,16 @@ const HeroCarousel = () => {
 
 
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-3 bg-[#9A1E85] text-white font-semibold rounded-full shadow-md hover:bg-[#bd2fa5] transition duration-300">
+                <button
+                  onClick={() => navigate('/product-list?search=mugs')}
+                  className="px-8 py-3 bg-[#9A1E85] text-white font-semibold rounded-full shadow-md hover:bg-[#bd2fa5] transition duration-300 pointer-events-auto"
+                >
                   Shop Collection
                 </button>
-                <button className="px-8 py-3 bg-white text-[#9A1E85] font-semibold rounded-full border-2 border-[#9A1E85] shadow-md hover:bg-[#bd2fa5] hover:text-white transition duration-300">
+                <button
+                  onClick={() => navigate('/contact-us')}
+                  className="px-8 py-3 bg-white text-[#9A1E85] font-semibold rounded-full border-2 border-[#9A1E85] shadow-md hover:bg-[#bd2fa5] hover:text-white transition duration-300 pointer-events-auto"
+                >
                   Request a Quote
                 </button>
               </div>
@@ -114,10 +129,16 @@ const HeroCarousel = () => {
 
 
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-3 bg-[#205CCB] text-white font-semibold rounded-full shadow-md hover:bg-[#2969e0] transition duration-300">
+                <button
+                  onClick={() => navigate('/product-list?search=gifts')}
+                  className="px-8 py-3 bg-[#205CCB] text-white font-semibold rounded-full shadow-md hover:bg-[#2969e0] transition duration-300 pointer-events-auto"
+                >
                   Shop Collection
                 </button>
-                <button className="px-8 py-3 bg-white text-[#205CCB] font-semibold rounded-full border-2 border-[#205CCB] shadow-md hover:bg-[#2969e0] hover:text-white transition duration-300">
+                <button
+                  onClick={() => navigate('/contact-us')}
+                  className="px-8 py-3 bg-white text-[#205CCB] font-semibold rounded-full border-2 border-[#205CCB] shadow-md hover:bg-[#2969e0] hover:text-white transition duration-300 pointer-events-auto"
+                >
                   Request a Quote
                 </button>
               </div>
@@ -153,10 +174,16 @@ const HeroCarousel = () => {
 
 
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-3 bg-[#9A1E85] text-white font-semibold rounded-full shadow-md hover:bg-[#bd2fa5] transition duration-300">
+                <button
+                  onClick={() => navigate('/product-list?search=banner')}
+                  className="px-8 py-3 bg-[#9A1E85] text-white font-semibold rounded-full shadow-md hover:bg-[#bd2fa5] transition duration-300 pointer-events-auto"
+                >
                   Shop Collection
                 </button>
-                <button className="px-8 py-3 bg-white text-[#9A1E85] font-semibold rounded-full border-2 border-[#9A1E85] shadow-md hover:bg-[#bd2fa5] hover:text-white transition duration-300">
+                <button
+                  onClick={() => navigate('/contact-us')}
+                  className="px-8 py-3 bg-white text-[#9A1E85] font-semibold rounded-full border-2 border-[#9A1E85] shadow-md hover:bg-[#bd2fa5] hover:text-white transition duration-300 pointer-events-auto"
+                >
                   Request a Quote
                 </button>
               </div>

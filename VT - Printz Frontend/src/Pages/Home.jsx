@@ -4,7 +4,6 @@ import ProductGrid from '../Components/ProductGrid'
 import CustomerCarousel from '../Components/CustomerCarousel'
 import FAQ from '../Components/FAQ'
 import Featured from '../Components/Featured'
-
 import VideoStories from '../Components/VideoStories'
 import WatchAndBuy from './WatchAndBuy'
 

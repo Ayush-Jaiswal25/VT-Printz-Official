@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     slug: { type: String, required: true, unique: true },
     serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
     image: { type: String, required: false }, // Main image
+    video: { type: String, required: false }, // Product video
     gallery: [{ type: String }], // Additional images
     description: { type: String },
     features: [{ type: String }], // Array of strings

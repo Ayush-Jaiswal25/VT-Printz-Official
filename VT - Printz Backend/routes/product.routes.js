@@ -272,7 +272,7 @@ router.get('/products', async (req, res) => {
 router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 5 }]), async (req, res) => {
     try {
         // Parse simple fields
-        const { name, serviceId, description, originalPrice, discountedPrice, features } = req.body;
+        const { name, serviceId, description, originalPrice, discountedPrice, features, video } = req.body;
 
         // Handle Files
         let mainImageUrl = "";
@@ -313,7 +313,8 @@ router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 
             discountedPrice: Number(discountedPrice),
             features: featuresArray,
             image: mainImageUrl,
-            gallery: galleryUrls
+            gallery: galleryUrls,
+            video
         });
 
         await newProduct.save();
@@ -328,7 +329,7 @@ router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 
 // UPDATE Product
 router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 5 }]), async (req, res) => {
     try {
-        const { name, description, originalPrice, discountedPrice, features } = req.body;
+        const { name, description, originalPrice, discountedPrice, features, video } = req.body;
         let updateData = {};
 
         if (name) {
@@ -338,6 +339,7 @@ router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }, { nam
         if (description) updateData.description = description;
         if (originalPrice) updateData.originalPrice = Number(originalPrice);
         if (discountedPrice) updateData.discountedPrice = Number(discountedPrice);
+        if (video) updateData.video = video;
         // serviceId is not updated here, assuming it's fixed or handled separately if needed.
 
         // Features

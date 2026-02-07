@@ -2,7 +2,6 @@
 // import axios from "axios";
 // import { PlusSquare, MessageSquare, UserCog, Search, Eye, CheckCircle2, Trash2, Pencil, X } from "lucide-react";
 
-
 // function Admin() {
 //   const [active, setActive] = React.useState("serviceprovider");
 //   const [form, setForm] = React.useState({ category: "", name: "", price: "", description: "" });
