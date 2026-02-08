@@ -40,7 +40,7 @@ VT – Printz offers a wide range of **corporate and printing services**, includ
 - **MongoDB Atlas**
 
 ### ☁️ Cloud & Media Storage
-- **Cloudinary** (for images and media assets)
+- **Cloudinary** (for images and media Assets)
 
 ---
 

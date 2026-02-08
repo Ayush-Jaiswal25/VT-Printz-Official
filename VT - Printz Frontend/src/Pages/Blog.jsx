@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Corporate_customized_gift from "../assets/blog/Corporate_customized_gift.png";
-import Printing from "../assets/blog/Printing.png";
-import visitingcard from "../assets/blog/visitingcard.png";
-import tshirt from "../assets/blog/tshirt.png";
+import Corporate_customized_gift from "../Assets/blog/Corporate_customized_gift.png";
+import Printing from "../Assets/blog/Printing.png";
+import visitingcard from "../Assets/blog/visitingcard.png";
+import tshirt from "../Assets/blog/tshirt.png";
 
 const BLOG_POSTS = [
   {
