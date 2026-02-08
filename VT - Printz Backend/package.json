@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon vt-printz-backend.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node vt-printz-backend.js",
+    "dev": "nodemon vt-printz-backend.js"
   },
   "keywords": [],
   "author": "",
