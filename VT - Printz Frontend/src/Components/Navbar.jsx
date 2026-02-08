@@ -281,7 +281,6 @@ function Hamburger({ open }) {
   return (
     <button
       className={`hamburger ${open ? "open" : ""}`}
-      onClick={() => setOpen(!open)}
       aria-label="Menu"
     >
       <span />

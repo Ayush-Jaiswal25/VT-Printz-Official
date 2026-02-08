@@ -75,7 +75,7 @@ const VideoStories = () => {
         <>
             {/* Horizontal List */}
             <div className="w-full flex justify-center py-6 overflow-hidden">
-                <div className="flex gap-4 md:gap-8 overflow-x-auto px-4 pb-4 scrollbar-hide w-full max-w 8xl justify-start md:justify-center">
+                <div className="flex gap-4 md:gap-8 overflow-x-auto px-4 pb-4 hidescroll w-full max-w 8xl justify-start md:justify-center">
                     {stories.map((story, index) => (
                         <StoryItem
                             key={index}
