@@ -59,7 +59,20 @@ router.post("/create", authMiddleware, async (req, res) => {
 // Get User Orders
 router.get("/my-orders", authMiddleware, async (req, res) => {
     try {
-        const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
+        const orders = await Order.find({ userId: req.user.id })
+            .populate({
+                path: "items.productId",
+                select: "image name slug serviceId",
+                populate: {
+                    path: "serviceId",
+                    select: "slug categoryId",
+                    populate: {
+                        path: "categoryId",
+                        select: "slug"
+                    }
+                }
+            })
+            .sort({ createdAt: -1 });
         res.json(orders);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -70,7 +83,10 @@ router.get("/my-orders", authMiddleware, async (req, res) => {
 router.get("/all-orders", async (req, res) => {
     // Ideally verify admin role here
     try {
-        const orders = await Order.find().populate("userId", "name email phone").sort({ createdAt: -1 });
+        const orders = await Order.find()
+            .populate("userId", "name email phone")
+            .populate("items.productId", "image name")
+            .sort({ createdAt: -1 });
         res.json(orders);
     } catch (err) {
         res.status(500).json({ message: err.message });

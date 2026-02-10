@@ -20,7 +20,15 @@ const router = express.Router();
 // Get User Cart
 router.get("/get", authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate("cart.productId");
+        const user = await User.findById(req.user.id).populate({
+            path: "cart.productId",
+            populate: {
+                path: "serviceId",
+                populate: {
+                    path: "categoryId"
+                }
+            }
+        });
         if (!user) return res.status(404).json({ message: "User not found" });
 
         res.json(user.cart);
@@ -96,7 +104,15 @@ router.post("/add", authMiddleware, upload.single('designFile'), async (req, res
         await user.save();
 
         // Return updated cart
-        const updatedUser = await User.findById(req.user.id).populate("cart.productId");
+        const updatedUser = await User.findById(req.user.id).populate({
+            path: "cart.productId",
+            populate: {
+                path: "serviceId",
+                populate: {
+                    path: "categoryId"
+                }
+            }
+        });
         res.json({ message: "Added to cart", cart: updatedUser.cart });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -131,7 +147,15 @@ router.post("/update", authMiddleware, async (req, res) => {
 
         await user.save();
 
-        const updatedUser = await User.findById(req.user.id).populate("cart.productId");
+        const updatedUser = await User.findById(req.user.id).populate({
+            path: "cart.productId",
+            populate: {
+                path: "serviceId",
+                populate: {
+                    path: "categoryId"
+                }
+            }
+        });
         res.json({ message: "Cart updated", cart: updatedUser.cart });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -152,7 +176,15 @@ router.post("/remove", authMiddleware, async (req, res) => {
 
         await user.save();
 
-        const updatedUser = await User.findById(req.user.id).populate("cart.productId");
+        const updatedUser = await User.findById(req.user.id).populate({
+            path: "cart.productId",
+            populate: {
+                path: "serviceId",
+                populate: {
+                    path: "categoryId"
+                }
+            }
+        });
         res.json({ message: "Item removed", cart: updatedUser.cart });
     } catch (err) {
         res.status(500).json({ message: err.message });

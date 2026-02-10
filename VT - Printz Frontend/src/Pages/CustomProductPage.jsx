@@ -87,9 +87,22 @@ const CustomProductPage = () => {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("productId", productId);
+      formData.append("quantity", qty);
+
+      const note = customizationText
+        ? `${customizationText} | Shape: ${selectedShape}`
+        : `Shape: ${selectedShape}`;
+      formData.append("customizationNote", note);
+
+      if (uploadedFile) {
+        formData.append("designFile", uploadedFile);
+      }
+
       await axios.post(`${import.meta.env.VITE_API_URL}/api/cart/add`,
-        { productId, quantity: qty },
-        { headers: { "auth-token": token } }
+        formData,
+        { headers: { "auth-token": token, "Content-Type": "multipart/form-data" } }
       );
       alert("Added to cart successfully!");
       if (fetchCartCount) fetchCartCount();

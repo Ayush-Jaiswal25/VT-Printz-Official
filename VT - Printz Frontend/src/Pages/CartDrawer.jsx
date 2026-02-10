@@ -205,7 +205,21 @@ function CartDrawer({ onClose }) {
           ) : (
             <div className="p-5 space-y-6">
               {cartItems.map((item) => (
-                <div key={item._id} className="flex gap-4">
+                <div
+                  key={item._id}
+                  className="flex gap-4 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition relative group"
+                  onClick={() => {
+                    const product = item.productId;
+                    if (product?.serviceId?.categoryId?.slug && product?.serviceId?.slug && product?.slug) {
+                      onClose();
+                      navigate(`/services/${product.serviceId.categoryId.slug}/${product.serviceId.slug}/${product.slug}`);
+                    } else if (product?.serviceId?.categoryId?.slug && product?.serviceId?.slug) {
+                      // Fallback for services without sub-products (if applicable)
+                      onClose();
+                      navigate(`/services/${product.serviceId.categoryId.slug}/${product.serviceId.slug}`);
+                    }
+                  }}
+                >
                   <img
                     src={item.productId?.image || "https://via.placeholder.com/80"}
                     alt={item.productId?.name}
@@ -222,7 +236,26 @@ function CartDrawer({ onClose }) {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3 mt-3">
+                    <div className="flex flex-col gap-1 mt-1">
+                      {item.customizationNote && (
+                        <p className="text-xs text-gray-500 italic bg-gray-50 p-1 rounded">
+                          {item.customizationNote}
+                        </p>
+                      )}
+
+                      {item.logoUrl && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-400">Design:</span>
+                          <img
+                            src={item.logoUrl}
+                            alt="Custom Design"
+                            className="w-10 h-10 object-cover rounded border border-gray-200"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex border rounded-full">
                         <button
                           onClick={() => updateQty(item.productId._id, "dec")}

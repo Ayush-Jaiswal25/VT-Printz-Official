@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function MyOrders() {
+    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,8 @@ function MyOrders() {
         }
     };
 
-    const handleCancel = async (id) => {
+    const handleCancel = async (id, e) => {
+        e.stopPropagation(); // Prevent navigation when clicking cancel
         if (!window.confirm("Are you sure you want to cancel this order?")) return;
 
         try {
@@ -101,7 +104,7 @@ function MyOrders() {
                                         </span>
                                         {order.status !== "Completed" && order.status !== "Cancelled" && (
                                             <button
-                                                onClick={() => handleCancel(order._id)}
+                                                onClick={(e) => handleCancel(order._id, e)}
                                                 className="ml-3 text-xs text-red-600 hover:text-red-800 underline font-semibold"
                                             >
                                                 Cancel Order
@@ -114,9 +117,21 @@ function MyOrders() {
                             {/* ORDER ITEMS */}
                             <div className="p-6 space-y-4">
                                 {order.items.map((item, index) => (
-                                    <div key={index} className="flex gap-4 items-start">
+                                    <div
+                                        key={index}
+                                        className="flex gap-4 items-start cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition"
+                                        onClick={() => {
+                                            const product = item.productId;
+                                            if (product?.serviceId?.categoryId?.slug && product?.serviceId?.slug && product?.slug) {
+                                                navigate(`/services/${product.serviceId.categoryId.slug}/${product.serviceId.slug}/${product.slug}`);
+                                            } else if (product?.serviceId?.categoryId?.slug && product?.serviceId?.slug) {
+                                                // Fallback
+                                                navigate(`/services/${product.serviceId.categoryId.slug}/${product.serviceId.slug}`);
+                                            }
+                                        }}
+                                    >
                                         <img
-                                            src={item.logoUrl || "https://via.placeholder.com/80?text=No+Image"}
+                                            src={item.productId?.image || item.logoUrl || "https://via.placeholder.com/80?text=No+Image"}
                                             alt="Product"
                                             className="w-16 h-16 object-cover rounded-md border"
                                         />
@@ -128,11 +143,14 @@ function MyOrders() {
                                             )}
 
                                             {/* FILES LINKS */}
-                                            <div className="flex gap-3 mt-2">
+                                            <div className="flex gap-3 mt-2" onClick={(e) => e.stopPropagation()}>
                                                 {item.logoUrl && (
-                                                    <a href={item.logoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-                                                        View Design
-                                                    </a>
+                                                    <div className="flex flex-col gap-1">
+                                                        <a href={item.logoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
+                                                            View Design
+                                                        </a>
+                                                        <img src={item.logoUrl} alt="Design" className="w-10 h-10 object-cover rounded border border-blue-200" />
+                                                    </div>
                                                 )}
                                                 {item.videoUrl && (
                                                     <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">

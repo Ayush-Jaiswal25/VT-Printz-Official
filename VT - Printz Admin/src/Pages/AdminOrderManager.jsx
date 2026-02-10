@@ -128,7 +128,7 @@ function AdminOrderManager() {
                                     {order.items.map((item, idx) => (
                                         <div key={idx} className="flex gap-4 items-center bg-gray-50 p-2 rounded-lg">
                                             <img
-                                                src={item.logoUrl || "https://via.placeholder.com/40"}
+                                                src={item.productId?.image || item.logoUrl || "https://via.placeholder.com/40"}
                                                 alt="Img"
                                                 className="w-12 h-12 object-cover rounded border"
                                             />
@@ -138,7 +138,14 @@ function AdminOrderManager() {
                                                 {item.customizationNote && <p className="text-xs text-gray-600 italic">Note: {item.customizationNote}</p>}
                                             </div>
                                             <div className="flex flex-col gap-1 text-right">
-                                                {item.logoUrl && <a href={item.logoUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Design</a>}
+                                                {item.logoUrl && (
+                                                    <div className="flex flex-col gap-1">
+                                                        <a href={item.logoUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">
+                                                            Design
+                                                        </a>
+                                                        <img src={item.logoUrl} alt="Design" className="w-8 h-8 object-cover rounded border border-blue-200" />
+                                                    </div>
+                                                )}
                                                 {item.videoUrl && <a href={item.videoUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Video</a>}
                                             </div>
                                         </div>
