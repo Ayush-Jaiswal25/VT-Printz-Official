@@ -28,18 +28,39 @@ function ProviderProductDetail() {
 
   const [shape, setShape] = React.useState(shapeOptions[0]);
   const [pack, setPack] = React.useState(10);
-  const [logoFile, setLogoFile] = React.useState(null);
+  const [uploadFile, setUploadFile] = React.useState(null);
   const fileRef = React.useRef(null);
-  const [logoUrl, setLogoUrl] = React.useState(null);
+  const [previewUrl, setPreviewUrl] = React.useState(null);
+
   React.useEffect(() => {
-    if (!logoFile) {
-      setLogoUrl(null);
+    if (!uploadFile) {
+      setPreviewUrl(null);
       return;
     }
-    const u = URL.createObjectURL(logoFile);
-    setLogoUrl(u);
-    return () => URL.revokeObjectURL(u);
-  }, [logoFile]);
+    // Only create object URL for images for preview on the mock
+    if (uploadFile.type.startsWith('image/')) {
+      const u = URL.createObjectURL(uploadFile);
+      setPreviewUrl(u);
+      return () => URL.revokeObjectURL(u);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [uploadFile]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setUploadFile(null);
+      return;
+    }
+    // Size limit: 50MB
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("File size exceeds 50MB limit.");
+      return;
+    }
+    setUploadFile(file);
+  };
 
   const qty = typeof pack === "number" ? pack : 3;
   const total = basePrice * qty;
@@ -57,26 +78,30 @@ function ProviderProductDetail() {
     }
 
     if (!token) {
-      // Save pending item to localStorage
-      const pendingItem = {
-        type: 'provider',
-        productId,
-        quantity: qty
-      };
-      localStorage.setItem('pendingCartItem', JSON.stringify(pendingItem));
-      alert("Please login to add items to cart");
+      // Save pending item to localStorage (cannot save files easily to localstorage)
+      alert("Please login to add items to cart. Custom files (logo/video) must be re-selected after login.");
+      // const pendingItem = { type: 'provider', productId, quantity: qty };
+      // localStorage.setItem('pendingCartItem', JSON.stringify(pendingItem));
+      // navigating to login
       navigate("/login-and-signup");
       return;
     }
 
     setLoading(true);
     try {
-      // qty is the number of pieces (e.g. 10, 20)
-      // Assuming backend Product price is per piece
+      const formData = new FormData();
+      formData.append("productId", productId);
+      formData.append("quantity", qty);
+      formData.append("customizationNote", `Shape: ${shape}`); // Example of sending other details
+
+      if (uploadFile) {
+        formData.append("designFile", uploadFile);
+      }
+
       await import("axios").then(axios =>
         axios.default.post(`${import.meta.env.VITE_API_URL}/api/cart/add`,
-          { productId, quantity: qty },
-          { headers: { "auth-token": token } })
+          formData,
+          { headers: { "auth-token": token, "Content-Type": "multipart/form-data" } })
       );
 
       alert("Added to cart successfully!");
@@ -101,7 +126,7 @@ function ProviderProductDetail() {
               backgroundPosition: "center",
             }}
           />
-          {logoUrl && (
+          {previewUrl && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className="flex items-center justify-center bg-white/80"
@@ -114,7 +139,7 @@ function ProviderProductDetail() {
                   border: "2px solid #fff",
                 }}
               >
-                <img src={logoUrl} alt="logo" className="max-w-full max-h-full object-contain" />
+                <img src={previewUrl} alt="logo" className="max-w-full max-h-full object-contain" />
               </div>
             </div>
           )}
@@ -134,8 +159,18 @@ function ProviderProductDetail() {
             <div className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded">SAVE 23%</div>
           </div>
           <div>
-            <button onClick={() => fileRef.current?.click()} className="w-full bg-[#F59E0B] text-white font-semibold py-3 rounded-lg">Upload Your Logo</button>
-            <input ref={fileRef} type="file" className="hidden mt-2 w-full text-sm" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+            <div>
+              <div>
+                <div className="flex-1">
+                  <button onClick={() => fileRef.current?.click()} className="w-full bg-[#F59E0B] text-white font-semibold py-3 rounded-lg text-sm">
+                    {uploadFile ? "Change Design File" : "Upload Design (Image/Video) (Optional)"}
+                  </button>
+                  <div className="text-xs text-gray-500 mt-1 text-center">Max size: 50MB</div>
+                  <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
+                  {uploadFile && <p className="text-xs text-blue-600 mt-1 font-semibold truncate">Selected: {uploadFile.name}</p>}
+                </div>
+              </div>
+            </div>
           </div>
           <div className="text-sm text-green-700 bg-green-100 px-3 py-2 rounded-lg">
             We’ll send design preview for approval after order is Placed/Confirmed.

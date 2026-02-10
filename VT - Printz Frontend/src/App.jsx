@@ -27,6 +27,8 @@ import ProviderProductDetail from './Pages/ProviderProductDetail.jsx';
 import LoginAndSignup from './Pages/LoginAndSignup.jsx';
 import CartDrawer from './Pages/CartDrawer.jsx';
 import Blog from './Pages/Blog.jsx';
+import NotFound from './Pages/NotFound.jsx';
+import MyOrders from './Pages/MyOrders.jsx';
 
 function App() {
   const location = useLocation();
@@ -40,6 +42,7 @@ function App() {
       <div id='Body-routes' className="body-routes">
         <Routes location={location} key={location.pathname}>
           <Route path='/' element={<Home />} />
+          <Route path='/my-orders' element={<MyOrders />} />
           <Route path='/login-and-signup' element={<LoginAndSignup />} />
           <Route path='/about-us' element={<About />} />
           <Route path='/card-drawer' element={<CartDrawer />} />
@@ -64,6 +67,7 @@ function App() {
           <Route path="/services/:categorySlug" element={<ServiceCategoryPage />} />
           <Route path="/services/:categorySlug/:serviceSlug" element={<ServiceCategoryPage />} />
           <Route path="/services/:categorySlug/:serviceSlug/:subSlug" element={<ServiceDetail />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
       </div>

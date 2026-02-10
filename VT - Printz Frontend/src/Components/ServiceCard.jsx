@@ -9,7 +9,7 @@
 //       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9A1E85] rounded-2xl"
 //     >
 //       <div className="relative h-80 overflow-hidden rounded-2xl bg-black shadow-md transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-2xl">
-        
+
 //         {/* Background Image */}
 //         <img
 //           src={image}
@@ -26,7 +26,7 @@
 
 //         {/* Content */}
 //         <div className="relative z-10 flex h-full flex-col justify-end p-6">
-          
+
 //           {/* Title */}
 //           <h3 className="text-2xl font-semibold text-white tracking-wide leading-snug">
 //             {title}
@@ -64,14 +64,14 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-const ServiceCard = ({ title, image, slug }) => {
+const ServiceCard = ({ title, image, slug, categorySlug }) => {
   return (
     <Link
-      to={`/services/printing-services/${slug}`}
+      to={`/services/${categorySlug || 'printing-services'}/${slug}`}
       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-xl"
     >
       <div className="rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        
+
         {/* Image */}
         <div className="overflow-hidden rounded-lg">
           <img

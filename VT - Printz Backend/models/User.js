@@ -29,7 +29,10 @@ const userSchema = new mongoose.Schema({
       quantity: {
         type: Number,
         default: 1
-      }
+      },
+      logoUrl: { type: String, required: false },
+      videoUrl: { type: String, required: false },
+      customizationNote: { type: String, required: false }
     }
   ]
 });

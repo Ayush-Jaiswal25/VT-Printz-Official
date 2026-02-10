@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { WHATSAPP_NUMBER } from "../Utils/constants";
 
 function CartDrawer({ onClose }) {
   const navigate = useNavigate();
@@ -29,8 +30,18 @@ function CartDrawer({ onClose }) {
     }
   };
 
+  const [userName, setUserName] = useState("Guest");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userName");
     onClose();
     navigate("/login-and-signup");
   };
@@ -73,20 +84,56 @@ function CartDrawer({ onClose }) {
   const discount = subtotal > 999 ? subtotal * 0.12 : 0;
   const finalTotal = subtotal - discount;
 
-  const handleCheckout = () => {
-    let message = "Hello, I want to place an order:%0A%0A";
+  const handleCheckout = async () => {
+    // 1. Create Order in Backend (Seamless)
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login-and-signup");
+        return;
+      }
 
-    cartItems.forEach((item, index) => {
-      const price = item.productId?.discountedPrice || item.productId?.originalPrice || 0;
-      message += `${index + 1}. ${item.productId?.name} (x${item.quantity}) - ₹${price * item.quantity}%0A`;
-    });
+      setLoading(true);
+      // This will clear the cart in backend
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders/create`, {}, {
+        headers: { "auth-token": token }
+      });
 
-    message += `%0ASubtotal: ₹${subtotal}`;
-    message += `%0ADiscount: -₹${discount.toFixed(0)}`;
-    message += `%0A*Total Amount: ₹${finalTotal.toFixed(0)}*`;
-    message += "%0A%0APlease confirm my order.";
+      // 2. Prepare WhatsApp Message
+      let message = "Hello, I want to confirm my order:%0A%0A";
+      // Use cartItems from state (which are now cleared in backend, but we still have them in local state to build message)
+      // Or deeper, we could use the response order items, but using local state is faster for now.
 
-    window.open(`https://wa.me/919589304135?text=${message}`, "_blank");
+      cartItems.forEach((item, index) => {
+        const price = item.productId?.discountedPrice || item.productId?.originalPrice || 0;
+        message += `${index + 1}. ${item.productId?.name} (x${item.quantity}) - ₹${price * item.quantity}%0A`;
+        if (item.logoUrl) message += `   Design: ${item.logoUrl}%0A`;
+        if (item.videoUrl) message += `   Video/Ref: ${item.videoUrl}%0A`;
+        if (item.customizationNote) message += `   Note: ${item.customizationNote}%0A`;
+      });
+
+      message += `%0ASubtotal: ₹${subtotal}`;
+      message += `%0ADiscount: -₹${discount.toFixed(0)}`;
+      message += `%0A*Total Amount: ₹${finalTotal.toFixed(0)}*`;
+      message += `%0AOrder ID: ${res.data.order._id}`;
+      message += "%0A%0APlease process my order.";
+
+      // Clear local cart
+      setCartItems([]);
+
+      // 3. Redirect to WhatsApp
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
+
+      // Close drawer and go to orders?
+      onClose();
+      navigate("/my-orders");
+
+    } catch (err) {
+      console.error("Order creation failed", err);
+      alert("Failed to place order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,8 +159,18 @@ function CartDrawer({ onClose }) {
       >
         {/* HEADER */}
         <div className="flex items-center justify-between px-5 py-4 border-b">
-          <h2 className="text-lg font-semibold">SHOPPING CART</h2>
-          <div className="flex items-center gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">SHOPPING CART</h2>
+            {/* Show User Name */}
+            <p className="text-xs text-gray-500">Hi, {userName}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { onClose(); navigate("/my-orders"); }}
+              className="text-xs font-bold text-[#02192F] border border-[#02192F] px-2 py-1 rounded hover:bg-gray-50 transition"
+            >
+              MY ORDERS
+            </button>
             <button
               onClick={handleLogout}
               className="text-xs font-bold text-red-500 border border-red-500 px-2 py-1 rounded hover:bg-red-50 transition"

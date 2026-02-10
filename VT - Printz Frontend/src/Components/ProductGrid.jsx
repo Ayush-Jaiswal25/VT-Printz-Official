@@ -92,22 +92,37 @@ export default function ProductGrid3D() {
 
   const navigateToProduct = (product) => {
     if (product.fullProduct) {
-      navigate("/provider-product", {
+      const p = product.fullProduct;
+      const name = p.name;
+      const category = p.serviceId?.name || "Custom";
+      const price = p.discountedPrice || p.price;
+      const media = product.img; // Use the resolved image (handles defaults)
+
+      // Create query string for persistence
+      const searchParams = new URLSearchParams();
+      searchParams.set("name", name);
+      searchParams.set("category", category);
+      searchParams.set("price", price);
+      // Only add media to URL if it's a string (avoid objects/functions if any edge case)
+      if (media && typeof media === 'string') {
+        searchParams.set("media", media);
+      }
+
+      navigate(`/provider-product?${searchParams.toString()}`, {
         state: {
           item: {
-            _id: product.fullProduct._id,
-            name: product.fullProduct.name,
-            category: product.fullProduct.serviceId?.name || "Custom",
-            price: product.fullProduct.discountedPrice || product.fullProduct.price,
-            media: product.fullProduct.image || product.fullProduct.media,
-            desc: product.fullProduct.description,
-            // Pass other potential fields if needed
-            ...product.fullProduct
+            _id: p._id,
+            name: name,
+            category: category,
+            price: price,
+            media: media,
+            desc: p.description,
+            ...p
           },
         },
       });
     } else {
-      // Fallback if we don't have the full object yet (shouldn't happen if API responds)
+      // Fallback if we don't have the full object yet
       navigate(`/product-list?search=${product.searchTerm || product.title}`);
     }
   };
