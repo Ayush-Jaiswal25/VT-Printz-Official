@@ -1,7 +1,7 @@
 // src/components/CategorySection.jsx
 import ServiceCard from "./ServiceCard";
 
-const CategorySection = ({ category, services = [] }) => {
+const CategorySection = ({ category, services = [], categorySlug }) => {
   const sectionId = category.replace(/\s+/g, "-").toLowerCase();
 
   if (!services.length) {
@@ -23,7 +23,7 @@ const CategorySection = ({ category, services = [] }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {services.map((service) => (
-          <ServiceCard key={service.slug} {...service} />
+          <ServiceCard key={service.slug} {...service} categorySlug={categorySlug} />
         ))}
       </div>
     </section>

@@ -67,7 +67,28 @@ const ProductList = () => {
               {currentProducts.map((item) => (
                 <div
                   key={item._id}
-                  className="relative h-64 rounded-xl overflow-hidden shadow-md group"
+                  onClick={() => {
+                    const searchParams = new URLSearchParams();
+                    searchParams.set("name", item.name);
+                    searchParams.set("category", item.category || "Custom"); // API might return serviceId populated? Check backend.
+                    // The backend 'products' endpoint populates 'serviceId'. So item.serviceId.name is category.
+                    const catName = item.serviceId?.name || "Custom";
+                    searchParams.set("category", catName);
+                    searchParams.set("price", item.discountedPrice || item.price);
+                    if (item.image) searchParams.set("media", item.image);
+
+                    navigate(`/provider-product?${searchParams.toString()}`, {
+                      state: {
+                        item: {
+                          ...item,
+                          category: catName,
+                          price: item.discountedPrice || item.price,
+                          media: item.image
+                        }
+                      }
+                    });
+                  }}
+                  className="relative h-64 rounded-xl overflow-hidden shadow-md group cursor-pointer"
                   style={{
                     backgroundImage: `url(${item.image || item.media})`, // Handle both image keys
                     backgroundSize: "cover",

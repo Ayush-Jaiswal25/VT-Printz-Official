@@ -36,6 +36,7 @@ router.get('/full-catalog', async (req, res) => {
                 const products = await Product.find({ serviceId: srv._id });
 
                 let serviceObj = {
+                    _id: srv._id, // Default to Service ID
                     title: srv.name,
                     slug: srv.slug,
                     image: srv.image,
@@ -47,6 +48,7 @@ router.get('/full-catalog', async (req, res) => {
                 if (products.length > 0) {
                     // Start by mapping all products to subcategories
                     serviceObj.subcategories = products.map(p => ({
+                        _id: p._id, // Product ID
                         title: p.name,
                         slug: p.slug,
                         image: p.image,
@@ -62,6 +64,7 @@ router.get('/full-catalog', async (req, res) => {
                     // so the frontend card displays a price.
                     if (products.length === 1) {
                         const p = products[0];
+                        serviceObj._id = p._id; // OVERWRITE with Product ID for Cart
                         serviceObj.originalPrice = p.originalPrice;
                         serviceObj.discountedPrice = p.discountedPrice;
                         serviceObj.features = p.features;
@@ -78,6 +81,7 @@ router.get('/full-catalog', async (req, res) => {
             }));
 
             return {
+                _id: cat._id,
                 category: cat.name,
                 categorySlug: cat.slug,
                 image: cat.image,
@@ -269,26 +273,19 @@ router.get('/products', async (req, res) => {
 });
 
 // POST Product
-router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 5 }]), async (req, res) => {
+router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }]), async (req, res) => {
     try {
         // Parse simple fields
         const { name, serviceId, description, originalPrice, discountedPrice, features, video } = req.body;
 
         // Handle Files
         let mainImageUrl = "";
-        let galleryUrls = [];
 
         // Main Image
         if (req.files['image'] && req.files['image'][0]) {
             mainImageUrl = await uploadToCloudinary(req.files['image'][0].path);
-        }
-
-        // Gallery
-        if (req.files['gallery']) {
-            for (const file of req.files['gallery']) {
-                const url = await uploadToCloudinary(file.path);
-                galleryUrls.push(url);
-            }
+        } else {
+            return res.status(400).json({ message: "Main image is required" });
         }
 
         // Features might come as stringified JSON if coming from FormData array, or comma separated
@@ -313,7 +310,6 @@ router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 
             discountedPrice: Number(discountedPrice),
             features: featuresArray,
             image: mainImageUrl,
-            gallery: galleryUrls,
             video
         });
 
@@ -327,7 +323,7 @@ router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 
 });
 
 // UPDATE Product
-router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 5 }]), async (req, res) => {
+router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }]), async (req, res) => {
     try {
         const { name, description, originalPrice, discountedPrice, features, video } = req.body;
         let updateData = {};
@@ -354,18 +350,6 @@ router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }, { nam
         // Main Image
         if (req.files['image'] && req.files['image'][0]) {
             updateData.image = await uploadToCloudinary(req.files['image'][0].path);
-        }
-
-        // Gallery (Append or Replace? For now, let's append)
-        if (req.files['gallery']) {
-            let galleryUrls = [];
-            for (const file of req.files['gallery']) {
-                const url = await uploadToCloudinary(file.path);
-                galleryUrls.push(url);
-            }
-            // If we want to replace, just set it. If append, we need to fetch first. 
-            // For simplicity in this iteration: Replace if provided.
-            updateData.gallery = galleryUrls;
         }
 
         const updated = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });

@@ -23,7 +23,6 @@ const ProductManager = () => {
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({});
     const [imageFile, setImageFile] = useState(null); // For main image
-    const [galleryFiles, setGalleryFiles] = useState(null); // For product gallery
     const topRef = React.useRef(null);
 
     // Search State
@@ -138,10 +137,6 @@ const ProductManager = () => {
         setImageFile(e.target.files[0]);
     };
 
-    const handleGalleryChange = (e) => {
-        setGalleryFiles(e.target.files);
-    };
-
     const openEditModal = (item) => {
         setEditItem(item);
         setFormData({
@@ -179,18 +174,17 @@ const ProductManager = () => {
         // Append Image
         if (imageFile) {
             data.append('image', imageFile);
+        } else if (!editItem) {
+            // Basic validation: Image required for new items
+            alert("Main image is required for new items");
+            setLoading(false);
+            return;
         }
 
         try {
             if (editItem) {
                 // EDIT MODE
                 const url = `${API_BASE}/${view}/${editItem._id}`;
-                // For gallery updates
-                if (view === 'products' && galleryFiles) {
-                    for (let i = 0; i < galleryFiles.length; i++) {
-                        data.append('gallery', galleryFiles[i]);
-                    }
-                }
                 await axios.put(url, data);
             } else {
                 // CREATE MODE
@@ -201,11 +195,6 @@ const ProductManager = () => {
                     await axios.post(`${API_BASE}/services`, data);
                 } else if (view === 'products') {
                     data.append('serviceId', selectedService._id);
-                    if (galleryFiles) {
-                        for (let i = 0; i < galleryFiles.length; i++) {
-                            data.append('gallery', galleryFiles[i]);
-                        }
-                    }
                     await axios.post(`${API_BASE}/products`, data);
                 }
             }
@@ -218,7 +207,6 @@ const ProductManager = () => {
             setShowForm(false);
             setFormData({});
             setImageFile(null);
-            setGalleryFiles(null);
             setEditItem(null);
         } catch (err) {
             console.error("Submission Error:", err);
@@ -390,16 +378,10 @@ const ProductManager = () => {
 
                         <div className="flex gap-4">
                             <div className="flex-1">
-                                <label className="block text-xs font-semibold mb-1">Main Image</label>
+                                <label className="block text-xs font-semibold mb-1">Main Image <span className="text-red-500">(Required)</span></label>
                                 <input type="file" onChange={handleFileChange} className="text-sm" />
                                 {editItem && editItem.image && <p className="text-xs text-blue-500 mt-1">Has existing image</p>}
                             </div>
-                            {view === 'products' && (
-                                <div className="flex-1">
-                                    <label className="block text-xs font-semibold mb-1">Gallery Images</label>
-                                    <input type="file" multiple onChange={handleGalleryChange} className="text-sm" />
-                                </div>
-                            )}
                         </div>
 
                         <div className="flex justify-end gap-3 mt-4">

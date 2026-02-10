@@ -468,6 +468,7 @@ import {
 // REAL feedback component (backend connected)
 import AdminFeedbackList from "./AdminFeedbackList";
 import ProductManager from "./ProductManager";
+import AdminOrderManager from "./AdminOrderManager";
 
 function Admin() {
   const [active, setActive] = React.useState("serviceprovider");
@@ -507,13 +508,13 @@ function Admin() {
             <div className="px-4 py-4 text-lg font-semibold flex-shrink-0">Admin</div>
             <nav className="border-t overflow-y-auto flex-1">
               <button
-                onClick={() => setActive("serviceprovider")}
-                className={`flex w-full items-center gap-3 px-4 py-3 ${active === "serviceprovider"
+                onClick={() => setActive("orders")}
+                className={`flex w-full items-center gap-3 px-4 py-3 ${active === "orders"
                   ? "bg-gray-100"
                   : "hover:bg-gray-50"
                   }`}
               >
-                <UserCog size={18} /> Service Provider
+                <div className="w-[18px] h-[18px] flex items-center justify-center border border-current rounded text-[10px] font-bold">O</div> Orders
               </button>
 
               <button
@@ -525,6 +526,8 @@ function Admin() {
               >
                 <Package size={18} /> Manage Products
               </button>
+
+
 
               <button
                 onClick={() => setActive("feedback")}
@@ -552,6 +555,9 @@ function Admin() {
 
           {/* 🔥 NEW PRODUCT MANAGER */}
           {active === "productmanager" && <ProductManager />}
+
+          {/* 🔥 NEW ORDER MANAGER */}
+          {active === "orders" && <AdminOrderManager />}
 
           {/* 🔥 REAL FEEDBACK SYSTEM */}
           {active === "feedback" && <AdminFeedbackList />}
